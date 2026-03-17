@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 
 export async function middleware(req: NextRequest) {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_KEY!
-  );
-
-  const token = req.cookies.get("sb-access-token")?.value;
+  const token = req.cookies.get("horologie-auth")?.value;
 
   if (!token && req.nextUrl.pathname !== "/login") {
     return NextResponse.redirect(new URL("/login", req.url));
@@ -17,5 +11,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|login).*)"]
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|login|api).*)"]
 };

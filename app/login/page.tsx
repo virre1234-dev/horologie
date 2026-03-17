@@ -18,10 +18,11 @@ export default function Login() {
   async function handleLogin() {
     setLoading(true);
     setError("");
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data.session) {
       setError("Fel e-post eller lösenord");
     } else {
+      document.cookie = `horologie-auth=${data.session.access_token}; path=/; max-age=86400`;
       router.push("/");
     }
     setLoading(false);
@@ -53,7 +54,7 @@ export default function Login() {
           <button
             onClick={handleLogin}
             disabled={loading || !email || !password}
-            style={{ background: "linear-gradient(135deg, #b48c50, #d4a853, #b48c50)", color: "#0a0a0a", border: "none", padding: "14px", fontFamily: "Montserrat, sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: 2.5, textTransform: "uppercase", cursor: "pointer", borderRadius: 1, marginTop: 8, opacity: loading ? 0.6 : 1 }}
+            style={{ background: "linear-gradient(135deg, #b48c50, #d4a853, #b48c50)", color: "#0a0a0a", border: "none", padding: "14px", fontFamily: "Montserrat, sans-serif", fontSize: 11, fontWeight: 600, letterSpacing: 2.5, textTransform: "uppercase", cursor: "pointer", borderRadius: 1, marginTop: 8, opacity: loading || !email || !password ? 0.4 : 1 }}
           >
             {loading ? "Loggar in..." : "Logga in"}
           </button>
