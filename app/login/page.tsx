@@ -1,12 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_KEY!
-);
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,6 +12,13 @@ export default function Login() {
   async function handleLogin() {
     setLoading(true);
     setError("");
+    
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_KEY!
+    );
+
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error || !data.session) {
       setError("Fel e-post eller lösenord");
