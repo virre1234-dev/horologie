@@ -1,4 +1,5 @@
 "use client";
+import { supabase } from "@/lib/supabase";
 import { useState, useEffect } from "react";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -34,7 +35,16 @@ export default function App() {
     "Beräknar marknadsvärde...", "Skriver kundbrev..."
   ];
 
-  useEffect(() => { fetchCases(); }, []);
+  useEffect(() => { fetchCases(); }, []);useEffect(() => {
+  supabase.auth.getSession().then(({ data }) => {
+    if (!data.session) {
+      window.location.href = "/login";
+    } else {
+      document.cookie = `sb-access-token=${data.session.access_token}; path=/; max-age=86400`;
+    }
+  });
+}, []);
+
 
   async function fetchCases() {
     setLoadingCases(true);
